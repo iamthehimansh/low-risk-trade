@@ -1,0 +1,99 @@
+\section{Methodology}
+
+\subsection{Overview}
+Our methodology combines quantitative data analysis with qualitative LLM-based reasoning. The system pipeline consists of three distinct stages: Data Acquisition and Preprocessing, Prompt Engineering and Context Construction, and Risk-Adjusted Decision Logic.
+
+\subsection{Data Acquisition and Preprocessing}
+\subsubsection{Data Sources}
+We utilize the Yahoo Finance API as our primary data source due to its reliability and comprehensive coverage of global equities. For any given ticker symbol $S$, we fetch two datasets:
+\begin{itemize}
+    \item $Q_t$: The real-time quote at time $t$, including current price $P_t$, volume $V_t$, and daily change $\Delta P_t$.
+    \item $H_{t-30 \dots t}$: A historical time-series of Daily OHLCV (Open, High, Low, Close, Volume) data for the past 30 trading days.
+\end{itemize}
+
+\subsubsection{Data Normalization}
+To ensure the LLM perceives relative movements rather than absolute values (which can vary by orders of magnitude between stocks), we normalize the historical data. We calculate the daily percentage return $R_i$ for each day $i$:
+\begin{equation}
+    R_i = \frac{P_i - P_{i-1}}{P_{i-1}} \times 100
+\end{equation}
+This transformation allows the model to analyze volatility and momentum independent of the nominal share price.
+
+\subsection{Mathematical Model of Risk}
+A core component of our "Low Risk" strategy is the quantification of volatility. While the LLM provides a qualitative assessment, we compute quantitative metrics to validate the "safety" of a trade.
+
+\subsubsection{Volatility ($\sigma$)}
+We define the 30-day historical volatility $\sigma$ as the standard deviation of the daily log returns:
+\begin{equation}
+    \sigma = \sqrt{\frac{1}{N-1} \sum_{i=1}^{N} (r_i - \bar{r})^2}
+\end{equation}
+where $r_i = \ln(P_i / P_{i-1})$ and $N=30$. Stocks with a $\sigma$ exceeding a predefined threshold (e.g., 0.05) are automatically flagged as "High Risk" before being sent to the LLM.
+
+\subsubsection{Sharpe Ratio}
+To assess the risk-adjusted return potential, we estimate a rolling Sharpe Ratio:
+\begin{equation}
+    S_a = \frac{E[R_a - R_f]}{\sigma_a}
+\end{equation}
+where $R_a$ is the asset return and $R_f$ is the risk-free rate (approximated by the 10-year Treasury yield).
+
+\begin{lstlisting}[language=JavaScript, caption=Prompt Template]
+const prompt = `
+  Analyze the following stock data for ${symbol}.
+  Current Price: ${quote.regularMarketPrice}
+  Recent History (last 30 days): ${JSON.stringify(recentHistory)}
+
+  Based on this data, determine if the trend suggests a "BUY" or "SELL" or "HOLD".
+  Provide a recommendation and a short textual explanation (max 3 sentences) explaining the trend.
+  
+  Format the response as JSON:
+  {
+    "recommendation": "BUY" | "SELL" | "HOLD",
+    "explanation": "string"
+  }
+`;
+\end{lstlisting}
+
+\subsection{Risk Assessment Logic}
+The "Low Risk" aspect of our strategy is enforced through the "HOLD" recommendation. The model is instructed (via the few-shot examples inherent in its training and the prompt's phrasing) to recommend "HOLD" when the trend is ambiguous or volatility is high. This conservative bias is crucial for retail investors.
+
+\subsection{Prompt Engineering Framework}
+The quality of the LLM's output is directly dependent on the quality of the prompt. We employ a "Chain-of-Thought" (CoT) prompting strategy to encourage the model to reason through the data before arriving at a conclusion.
+
+\subsubsection{Persona Adoption}
+We explicitly define the model's role:
+\begin{quote}
+    "You are a conservative, risk-averse financial analyst with 20 years of experience. Your priority is capital preservation. You prefer to miss a profit opportunity rather than incur a loss."
+\end{quote}
+This persona instruction biases the model towards "HOLD" or "SELL" recommendations in uncertain markets.
+
+\subsubsection{Context Injection}
+We structure the input data as a JSON object within the prompt. This structured format reduces token usage compared to natural language descriptions and allows the model to parse the time-series data effectively.
+\begin{lstlisting}[language=json, caption=Data Context Structure]
+{
+  "symbol": "AAPL",
+  "current_price": 150.25,
+  "history": [
+    {"date": "2023-10-01", "close": 148.00, "volume": 50000000},
+    ...
+  ]
+}
+\end{lstlisting}
+
+\subsubsection{Output Constraints}
+To ensure the output is parsable by our application, we enforce a strict JSON schema using the OpenAI API's \texttt{response\_format} parameter.
+\begin{lstlisting}[language=json, caption=Target Output Schema]
+{
+  "recommendation": "BUY" | "SELL" | "HOLD",
+  "risk_level": "LOW" | "MEDIUM" | "HIGH",
+  "reasoning": "string"
+}
+\end{lstlisting}
+
+\subsection{Decision Logic}
+The final trading signal is a composite of the quantitative filter and the qualitative LLM output.
+\begin{itemize}
+    \item \textbf{Step 1}: If $\sigma > Threshold$, return "High Volatility Warning" (No Trade).
+    \item \textbf{Step 2}: Query LLM.
+    \item \textbf{Step 3}: If LLM Recommendation is "BUY" AND Risk Level is "LOW", display "BUY".
+    \item \textbf{Step 4}: Otherwise, display "HOLD" or "SELL".
+\end{itemize}
+This "double-check" mechanism ensures that the AI's hallucinations do not lead to reckless trading decisions.

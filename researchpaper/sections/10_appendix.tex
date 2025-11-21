@@ -1,0 +1,140 @@
+\section{Appendix}
+
+\subsection{Source Code Listings}
+
+\subsubsection{Backend API Logic (route.ts)}
+The following TypeScript code demonstrates the core logic for the \texttt{/api/analyze} endpoint, including the prompt construction and OpenAI API integration.
+
+\begin{lstlisting}[language=JavaScript, caption=Next.js API Route for Stock Analysis]
+import { NextResponse } from 'next/server';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
+export async function POST(request: Request) {
+    try {
+        const { symbol, historical, quote } = await request.json();
+
+        if (!symbol || !historical || !quote) {
+            return NextResponse.json(
+                { error: 'Missing required data' }, 
+                { status: 400 }
+            );
+        }
+
+        // Prepare data for prompt (limit to last 30 days)
+        const recentHistory = historical.slice(-30).map((day: any) => ({
+            date: day.date,
+            close: day.close,
+            volume: day.volume,
+        }));
+
+        const prompt = `
+      Analyze the following stock data for ${symbol}.
+      Current Price: ${quote.regularMarketPrice}
+      Recent History (last 30 days): ${JSON.stringify(recentHistory)}
+
+      Based on this data, determine if the trend suggests a 
+      "BUY" or "SELL" or "HOLD".
+      Provide a recommendation and a short textual explanation 
+      (max 3 sentences) explaining the trend.
+      
+      Format the response as JSON:
+      {
+        "recommendation": "BUY" | "SELL" | "HOLD",
+        "explanation": "string"
+      }
+    `;
+
+        const completion = await openai.chat.completions.create({
+            messages: [{ role: 'user', content: prompt }],
+            model: 'gpt-4o',
+            response_format: { type: "json_object" },
+        });
+
+        const content = completion.choices[0].message.content;
+        if (!content) throw new Error('No content from OpenAI');
+        
+        const result = JSON.parse(content);
+        return NextResponse.json(result);
+    } catch (error) {
+        console.error('Error analyzing stock:', error);
+        return NextResponse.json(
+            { error: 'Failed to analyze stock' }, 
+            { status: 500 }
+        );
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Frontend Component (StockChart.tsx)}
+This component renders the visualization of the stock data, crucial for the user's verification of the AI's analysis.
+
+\begin{lstlisting}[language=JavaScript, caption=React Component for Stock Charting]
+'use client';
+
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer 
+} from 'recharts';
+
+export default function StockChart({ data }: { data: any[] }) {
+  return (
+    <div className="h-64 w-full bg-gray-800/50 rounded-xl p-4">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+          <XAxis 
+            dataKey="date" 
+            stroke="#9CA3AF" 
+            tick={{fontSize: 12}}
+            tickFormatter={(str) => new Date(str).toLocaleDateString()}
+          />
+          <YAxis 
+            stroke="#9CA3AF" 
+            domain={['auto', 'auto']}
+            tick={{fontSize: 12}}
+          />
+          <Tooltip 
+            contentStyle={{
+                backgroundColor: '#1F2937', 
+                border: 'none', 
+                borderRadius: '8px'
+            }}
+          />
+          <Line 
+            type="monotone" 
+            dataKey="close" 
+            stroke="#3B82F6" 
+            strokeWidth={2} 
+            dot={false} 
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+\end{lstlisting}
+
+\subsection{Prompt Engineering Iterations}
+The prompt used in the final system was the result of several iterations. Here we document the evolution of the prompt to demonstrate the importance of specific instructions.
+
+\subsubsection{Iteration 1: Naive Prompt}
+\begin{quote}
+    "Should I buy this stock? Here is the data: [JSON]"
+\end{quote}
+\textbf{Result}: The model often refused to answer, citing "I am not a financial advisor." When it did answer, the reasoning was vague.
+
+\subsubsection{Iteration 2: Role-Playing}
+\begin{quote}
+    "Act as a financial advisor. Analyze this data [JSON] and tell me to buy or sell."
+\end{quote}
+\textbf{Result}: Better, but the model was too aggressive, often recommending "BUY" on weak signals. It also failed to return valid JSON.
+
+\subsubsection{Iteration 3: Final Structured Prompt}
+\begin{quote}
+    "Analyze the following stock data... Format the response as JSON... Provide a recommendation... (max 3 sentences)..."
+\end{quote}
+\textbf{Result}: Consistent JSON output, conservative "HOLD" bias, and clear explanations.

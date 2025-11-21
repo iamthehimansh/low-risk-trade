@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# researchpaper
+.firebaserc
+firebase.json
+main.log
+main.aux
+main.out
+main.pdf

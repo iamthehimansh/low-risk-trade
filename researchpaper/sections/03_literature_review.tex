@@ -1,0 +1,40 @@
+\section{Literature Review}
+
+\subsection{Overview}
+The intersection of finance and computer science has been a fertile ground for research for over half a century. This section reviews the evolution of algorithmic trading, from early statistical methods to modern deep learning approaches, and situates our work within the emerging field of Generative AI in Finance.
+
+\subsection{Algorithmic Trading: From Rules to Models}
+Algorithmic trading refers to the use of computer programs to execute trades based on pre-defined criteria.
+\subsubsection{Statistical Arbitrage and Mean Reversion}
+Early algorithmic strategies focused on statistical arbitrage (StatArb) and pairs trading. Gatev et al. (2006) provided a comprehensive study on pairs trading, demonstrating that a simple distance-based strategy could generate excess returns. These strategies rely on the principle of mean reversion—the idea that asset prices will eventually return to their historical average. While effective, these models are purely quantitative and often fail during "black swan" events where historical correlations break down.
+
+\subsubsection{Machine Learning in Prediction}
+The advent of Machine Learning (ML) allowed for more complex non-linear modeling. Patel et al. (2015) compared four prediction models—Artificial Neural Networks (ANN), Support Vector Machines (SVM), Random Forest, and Naive Bayes—on Indian stock market data. They found that Random Forest and SVM outperformed traditional ANN approaches in predicting the direction of stock movement. However, these "shallow" learning models struggled with the temporal dependencies inherent in time-series data.
+
+\subsection{Deep Learning and Time-Series Forecasting}
+Deep Learning marked a significant leap forward. Recurrent Neural Networks (RNNs), and specifically Long Short-Term Memory (LSTM) networks, became the standard for financial time-series forecasting due to their ability to retain long-term dependencies.
+Fischer and Krauss (2018) deployed LSTM networks on the S\&P 500 constituents, showing that LSTMs statistically outperformed random forests and deep neural networks (DNNs). Despite their predictive power, deep learning models suffer from the "black box" opacity problem (Guidotti et al., 2018), making them difficult to trust in high-stakes financial decision-making.
+
+\subsection{Natural Language Processing (NLP) in Finance}
+Financial markets are driven not just by numbers, but by information. NLP allows computers to process this qualitative data.
+\subsubsection{The Evolution of Sentiment Analysis}
+\begin{itemize}
+    \item \textbf{Dictionary-Based Approaches}: Early work by Loughran and McDonald (2011) created a domain-specific dictionary for financial texts, noting that words like "liability" have different sentiments in finance than in general English.
+    \item \textbf{Bag-of-Words and TF-IDF}: These methods treated documents as collections of words, ignoring grammar and context. While useful for simple classification, they failed to capture nuance (e.g., "The company did not fail to meet expectations").
+    \item \textbf{Word Embeddings (Word2Vec, GloVe)}: These techniques mapped words to high-dimensional vectors, capturing semantic relationships. However, they were still context-independent (the word "bank" had the same vector whether referring to a river bank or a financial institution).
+\end{itemize}
+
+\subsubsection{Transformers and BERT}
+The introduction of the Transformer architecture (Vaswani et al., 2017) and BERT (Bidirectional Encoder Representations from Transformers) revolutionized NLP. Araci (2019) introduced FinBERT, a BERT model pre-trained specifically on financial texts. FinBERT achieved state-of-the-art results in financial sentiment classification, demonstrating the importance of domain-specific pre-training.
+
+\subsection{Large Language Models (LLMs) and Generative AI}
+The most recent frontier is Generative AI. Unlike discriminative models (like BERT) that classify text, generative models (like GPT-4) can produce text.
+\subsubsection{LLMs as Financial Analysts}
+Lopez-Lira and Tang (2023) investigated the potential of ChatGPT to predict stock market returns based on news headlines. They found a strong positive correlation between the "ChatGPT Sentiment Score" and subsequent daily returns, suggesting that LLMs possess a sophisticated understanding of market dynamics.
+Ko and Lee (2023) explored using LLMs for portfolio management, finding that GPT-based agents could construct diversified portfolios that outperformed benchmarks in certain market conditions.
+
+\subsubsection{Explainable AI (XAI) in Finance}
+The field of Explainable AI (XAI) seeks to make AI decisions transparent. In finance, this is crucial for regulatory compliance and user trust. Bussmann et al. (2020) argued that XAI is a prerequisite for the widespread adoption of AI in Fintech. Our work contributes directly to this sub-field by leveraging the natural language generation capabilities of LLMs to provide intrinsic explanations for trading signals, rather than relying on post-hoc interpretation methods like SHAP or LIME.
+
+\subsection{Gap in Existing Literature}
+While the individual components—algorithmic trading, deep learning, and NLP—are well-researched, there is a paucity of literature on integrated systems that combine these technologies for the retail investor. Most academic research focuses on maximizing alpha (profit) for institutional settings. There is limited work on "Low Risk" strategies that prioritize capital preservation and interpretability for non-experts. This paper addresses this gap by proposing a system design that uses LLMs not just for prediction, but for education and risk mitigation.

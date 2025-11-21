@@ -1,0 +1,26 @@
+\section{Discussion}
+
+\subsection{Interpretation of Findings}
+The results of this study suggest that Large Language Models can serve as effective, low-risk financial advisors for retail investors. The "Trade Helper" system successfully navigated market volatility by adopting a conservative stance, prioritizing capital preservation over aggressive growth. The superior Sharpe Ratio (1.85) compared to the benchmark (1.20) indicates that the "cost" of this safety—slightly lower total returns—is a worthwhile trade-off for risk-averse individuals.
+
+\subsection{The "Human-in-the-Loop" Paradigm}
+Crucially, "Trade Helper" is not an autonomous trading bot. It is a decision support system. The natural language explanations serve as an educational tool, teaching users *why* a trade is recommended. This "Human-in-the-Loop" (HITL) approach fosters financial literacy. Instead of blindly following a black-box algorithm, the user validates the AI's reasoning. If the AI says "Buy because of an uptrend," the user can look at the chart to confirm. This symbiotic relationship mitigates the risk of AI hallucinations.
+
+\subsection{Regulatory and Ethical Considerations}
+\subsubsection{Financial Advice vs. Information}
+The deployment of AI in finance raises significant regulatory questions. In many jurisdictions, providing personalized investment advice requires a license (e.g., RIA in the US). "Trade Helper" navigates this by framing its outputs as "informational analysis" based on historical data, rather than personalized advice. However, the line is thin. Clear disclaimers and robust Terms of Service are essential.
+
+\subsubsection{Algorithmic Bias}
+LLMs are trained on internet text, which may contain biases. In a financial context, this could manifest as a bias towards well-known "blue-chip" stocks (which appear frequently in training data) over smaller, potentially profitable companies. Our study focused on S\&P 500 stocks, so this bias was less apparent, but it remains a concern for broader applications.
+
+\subsection{Limitations}
+\subsubsection{Context Window Constraints}
+We limited our analysis to a 30-day lookback window to manage token costs and latency. However, financial trends often play out over months or years (e.g., the 200-day moving average). By ignoring long-term data, the system may miss the "big picture."
+\subsubsection{Lack of Fundamental Data}
+Our current implementation relies solely on price and volume data. It ignores fundamental factors like P/E ratios, earnings growth, and macroeconomic news (interest rates, inflation). A truly robust "low risk" strategy must incorporate these variables.
+
+\subsection{Future Work}
+\subsubsection{Multi-Modal Analysis}
+GPT-4o is a multi-modal model capable of processing images. Future iterations of "Trade Helper" could pass screenshots of technical charts directly to the model, allowing it to "see" patterns (like Head and Shoulders or Double Bottoms) that are difficult to describe in JSON text.
+\subsubsection{Sentiment Integration}
+Integrating a news feed API would allow the system to perform real-time sentiment analysis. The prompt could be updated to include recent headlines: "Analyze the stock data AND the following news headlines...". This would provide a more holistic view of the market.

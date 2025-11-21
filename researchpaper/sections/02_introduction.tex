@@ -1,0 +1,52 @@
+\section{Introduction}
+
+\subsection{Background and Motivation}
+The financial markets have long served as a barometer for global economic health and a primary vehicle for wealth generation. However, the allure of the stock market is inextricably linked to its inherent volatility and risk. For decades, institutional investors have leveraged sophisticated tools, vast datasets, and high-frequency trading (HFT) algorithms to gain an edge. In contrast, retail investors—individuals trading with their own capital—often find themselves at a significant information disadvantage.
+
+Traditional trading strategies generally fall into two categories: technical analysis and fundamental analysis. Technical analysis relies on the interpretation of chart patterns, volume, and statistical indicators (e.g., Moving Averages, RSI, MACD) to predict future price movements. Fundamental analysis, on the other hand, involves a deep dive into a company's financial statements, management team, industry conditions, and broader economic indicators. Both approaches require a level of expertise and time commitment that is often prohibitive for the average retail investor.
+
+\subsection{The Psychology of the Retail Investor}
+Behavioral finance literature suggests that retail investors are particularly susceptible to cognitive biases. The "fear of missing out" (FOMO) often drives investors to buy assets at peak prices, while "loss aversion" causes them to panic-sell during market downturns. This emotional trading cycle is a primary destroyer of wealth. A study by Barber and Odean (2000) found that individual investors who trade frequently underperform the market by a significant margin, largely due to poor timing and transaction costs.
+
+The need for objective, data-driven decision support systems is therefore critical. While many tools exist, they often suffer from a "usability gap." Professional terminals like Bloomberg are too expensive and complex, while free mobile apps often gamify trading, encouraging risky behavior rather than prudent analysis.
+
+\subsection{The Rise of Artificial Intelligence in Finance}
+Artificial Intelligence (AI) has revolutionized the financial sector. From predictive modeling using Support Vector Machines (SVMs) to complex deep learning architectures like Long Short-Term Memory (LSTM) networks, AI is ubiquitous in institutional trading. These models excel at identifying non-linear patterns in historical price data that are invisible to the human eye.
+
+However, a significant limitation of these traditional AI models is their "black box" nature. An LSTM model might predict a stock price increase with 85\% confidence, but it cannot explain *why*. For a retail investor, acting on a recommendation without understanding the rationale requires a leap of faith that many are unwilling—and perhaps should not be willing—to take.
+
+\subsection{The Promise of Large Language Models (LLMs)}
+The emergence of Large Language Models (LLMs), such as OpenAI's GPT-4, represents a paradigm shift. Unlike numerical models that process only quantitative data, LLMs can ingest and synthesize vast amounts of unstructured text—financial news, earnings call transcripts, and analyst reports. More importantly, LLMs possess the unique ability to generate natural language explanations.
+
+This capability addresses the "black box" problem directly. An LLM-driven system can not only analyze market trends but also articulate its reasoning: "The stock is recommended as a BUY because it has broken through a key resistance level while trading volume is 20\% above the 30-day average, indicating strong institutional interest." This transparency is the key to building trust and empowering retail investors to make informed, low-risk decisions.
+
+\subsection{Problem Statement}
+Despite the potential of LLMs, there is a lack of accessible, user-centric tools that effectively integrate this technology into a cohesive trading workflow. Existing solutions are often fragmented—requiring users to switch between charting software, news aggregators, and AI chatbots. Furthermore, generic LLMs can hallucinate or provide overly cautious "non-financial advice" disclaimers that render them useless for active trading.
+
+There is a need for a specialized system that:
+\begin{enumerate}
+    \item Integrates real-time quantitative data with the qualitative reasoning capabilities of LLMs.
+    \item Enforces a "low-risk" philosophy by filtering out high-volatility or ambiguous setups.
+    \item Presents actionable insights in a clear, explained format suitable for non-experts.
+\end{enumerate}
+
+\subsection{Objectives of the Study}
+This paper aims to bridge the gap between advanced AI research and practical retail trading tools. Our specific objectives are:
+\begin{enumerate}
+    \item To design and implement "Trade Helper," a web-based application that leverages Next.js and GPT-4o for real-time stock analysis.
+    \item To develop a prompt engineering framework that constrains the LLM to act as a conservative, risk-averse financial analyst.
+    \item To evaluate the system's performance using a 30-day lookback window, focusing on the accuracy of trend identification and the quality of generated explanations.
+    \item To assess the system's ability to minimize risk through a "HOLD" bias in ambiguous market conditions.
+\end{enumerate}
+
+\subsection{Paper Structure}
+The remainder of this paper is organized as follows:
+\begin{itemize}
+    \item \textbf{Section 2 (Literature Review)}: Provides a comprehensive overview of existing research in algorithmic trading, sentiment analysis, and the application of LLMs in finance.
+    \item \textbf{Section 3 (Methodology)}: Details the data acquisition process, the specific prompt engineering techniques employed, and the mathematical formulation of our risk metrics.
+    \item \textbf{Section 4 (System Architecture)}: Describes the technical implementation of the "Trade Helper" system, including the frontend-backend integration and security measures.
+    \item \textbf{Section 5 (Results)}: Presents the findings from our simulated trading experiments, including performance tables and risk analysis heatmaps.
+    \item \textbf{Section 6 (Discussion)}: Analyzes the implications of our findings, ethical considerations, and limitations.
+    \item \textbf{Section 7 (Conclusion)}: Summarizes the contributions and outlines future research directions.
+    \item \textbf{Appendix}: Contains full source code listings and detailed prompt iterations.
+\end{itemize}
